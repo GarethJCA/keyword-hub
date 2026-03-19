@@ -98,12 +98,19 @@ service = None
 def get_service():
     global service
     if service is None:
-        # Check if a custom path is provided via environment variables (e.g., from Cloud Run Secrets Manager)
-        env_path = os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH")
-        if env_path and os.path.exists(env_path):
-            config_path = env_path
+        # Method 1: Check if full YAML config is provided as an environment variable (simplest for Cloud Run)
+        env_config = os.environ.get("GOOGLE_ADS_CONFIG")
+        if env_config:
+            import tempfile
+            tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False)
+            tmp.write(env_config)
+            tmp.close()
+            config_path = tmp.name
+        # Method 2: Check if a custom file path is provided (e.g., from Secrets Manager volume mount)
+        elif os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH") and os.path.exists(os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH")):
+            config_path = os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH")
         else:
-            # Fallback to local development path
+            # Method 3: Fallback to local development path
             config_path = os.path.join(os.path.dirname(__file__), "../../google-ads.yaml")
             
         service = GoogleAdsService(config_path)
