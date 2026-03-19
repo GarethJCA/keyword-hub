@@ -5,13 +5,15 @@ from .models import KeywordResult, MonthlySearchVolume
 from typing import List
 
 class GoogleAdsService:
-    def __init__(self, config_path: str):
-        self.client = GoogleAdsClient.load_from_storage(config_path)
-        with open(config_path, "r") as f:
-            config = yaml.safe_load(f)
-            # Find the primary customer ID from the yaml or use a default
-            # For simplicity, we assume login_customer_id is the one to use for queries
-            self.customer_id = str(config.get("login_customer_id", ""))
+    def __init__(self, config_dict: dict = None, config_path: str = None):
+        if config_dict:
+            self.client = GoogleAdsClient.load_from_dict(config_dict)
+            self.customer_id = str(config_dict.get("login_customer_id", ""))
+        elif config_path:
+            self.client = GoogleAdsClient.load_from_storage(config_path)
+            with open(config_path, "r") as f:
+                config = yaml.safe_load(f)
+                self.customer_id = str(config.get("login_customer_id", ""))
 
     def get_keyword_ideas(self, seed_keyword: str, limit: int = 20, competition: str = "ALL", location_id: str = "2124") -> List[KeywordResult]:
         keyword_plan_idea_service = self.client.get_service("KeywordPlanIdeaService")
@@ -98,20 +100,20 @@ service = None
 def get_service():
     global service
     if service is None:
-        # Method 1: Check if full YAML config is provided as an environment variable (simplest for Cloud Run)
-        env_config = os.environ.get("GOOGLE_ADS_CONFIG")
-        if env_config:
-            import tempfile
-            tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False)
-            tmp.write(env_config)
-            tmp.close()
-            config_path = tmp.name
-        # Method 2: Check if a custom file path is provided (e.g., from Secrets Manager volume mount)
-        elif os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH") and os.path.exists(os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH")):
-            config_path = os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH")
+        # Method 1: Individual environment variables (simplest for Cloud Run)
+        dev_token = os.environ.get("GOOGLE_ADS_DEVELOPER_TOKEN")
+        if dev_token:
+            config_dict = {
+                "developer_token": dev_token,
+                "client_id": os.environ.get("GOOGLE_ADS_CLIENT_ID", ""),
+                "client_secret": os.environ.get("GOOGLE_ADS_CLIENT_SECRET", ""),
+                "refresh_token": os.environ.get("GOOGLE_ADS_REFRESH_TOKEN", ""),
+                "login_customer_id": os.environ.get("GOOGLE_ADS_LOGIN_CUSTOMER_ID", ""),
+                "use_proto_plus": True,
+            }
+            service = GoogleAdsService(config_dict=config_dict)
         else:
-            # Method 3: Fallback to local development path
+            # Method 2: Local development file
             config_path = os.path.join(os.path.dirname(__file__), "../../google-ads.yaml")
-            
-        service = GoogleAdsService(config_path)
+            service = GoogleAdsService(config_path=config_path)
     return service
