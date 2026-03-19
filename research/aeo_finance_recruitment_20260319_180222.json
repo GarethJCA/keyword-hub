@@ -1,0 +1,53 @@
+{
+  "questions": [
+    {
+      "question": "What does a finance recruitment agency do?",
+      "intent": "Informational",
+      "answer": "A finance recruitment agency specializes in sourcing, vetting, and placing highly qualified financial professionals into corporate roles. These agencies leverage extensive talent networks to connect businesses with top-tier candidates for positions such as CFOs, financial analysts, controllers, and accountants, ensuring a precise match for both technical skills and company culture."
+    },
+    {
+      "question": "How long does it take to hire a finance professional in Canada?",
+      "intent": "Informational",
+      "answer": "Hiring a finance professional in Canada typically takes between three to six weeks, depending on the seniority and complexity of the role. Partnering with a specialized finance recruitment agency can significantly reduce this time-to-hire by providing immediate access to pre-screened, passive talent pools and streamlining the interview, assessment, and negotiation processes."
+    },
+    {
+      "question": "Why should companies use a specialized finance recruiter?",
+      "intent": "Transactional",
+      "answer": "Companies should use a specialized finance recruiter to gain access to exclusive talent networks and industry-specific expertise. Specialized recruiters understand complex financial regulations, accounting standards, and technical requirements. This ensures businesses hire competent professionals who can accurately manage financial reporting, drive strategic growth, and mitigate compliance risks effectively."
+    },
+    {
+      "question": "What are the top finance roles in demand in Canada?",
+      "intent": "Informational",
+      "answer": "The most in-demand finance roles in Canada include Financial Planning and Analysis (FP&A) Managers, Corporate Controllers, Senior Accountants, and Chief Financial Officers. As Canadian businesses navigate economic shifts, there is a strong need for strategic finance leaders who possess advanced analytical skills, regulatory knowledge, and specialized financial technology proficiency."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Finance Recruitment",
+      "Staffing Agency",
+      "Financial Professional"
+    ],
+    "secondary_entities": [
+      "Chief Financial Officer (CFO)",
+      "Financial Analyst",
+      "Corporate Controller",
+      "Accountant",
+      "Talent Acquisition"
+    ],
+    "tertiary_entities": [
+      "Canadian job market",
+      "Time-to-hire",
+      "Financial reporting",
+      "Regulatory compliance",
+      "Passive talent pool"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Recruitment",
+      "https://en.wikipedia.org/wiki/Finance",
+      "https://en.wikipedia.org/wiki/Chief_financial_officer",
+      "https://en.wikipedia.org/wiki/Financial_analyst"
+    ]
+  },
+  "opportunity_score": 82,
+  "keyword": "Finance Recruitment"
+}

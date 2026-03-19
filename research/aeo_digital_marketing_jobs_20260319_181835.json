@@ -1,0 +1,53 @@
+{
+  "questions": [
+    {
+      "question": "What are the most in-demand digital marketing jobs in Canada?",
+      "intent": "Informational",
+      "answer": "The most in-demand digital marketing jobs in Canada include SEO Specialists, Paid Media Managers, Content Strategists, and Digital Marketing Directors. Employers actively seek professionals with advanced data analytics and growth marketing expertise. Partnering with a specialized recruitment agency helps candidates access exclusive, high-paying roles across top Canadian tech and corporate sectors."
+    },
+    {
+      "question": "How can I find remote digital marketing jobs in Canada?",
+      "intent": "Transactional",
+      "answer": "To find remote digital marketing jobs in Canada, leverage specialized professional staffing agencies that connect top talent with flexible employers. Update your portfolio to highlight digital campaign ROI, optimize your LinkedIn profile for remote work, and register with recruitment firms like Professional Staffing to access exclusive, unadvertised work-from-home marketing opportunities."
+    },
+    {
+      "question": "What is the average salary for a digital marketing manager in Canada?",
+      "intent": "Informational",
+      "answer": "The average salary for a Digital Marketing Manager in Canada typically ranges from $75,000 to $110,000 annually, depending on experience, location, and industry. Senior marketing roles in tech or finance, particularly in Toronto and Vancouver, often command higher compensation packages, including performance bonuses and comprehensive benefits negotiated by executive recruiters."
+    },
+    {
+      "question": "Why use a recruitment agency to hire digital marketing professionals?",
+      "intent": "Transactional",
+      "answer": "Using a professional recruitment agency to hire digital marketing professionals ensures access to pre-vetted, high-caliber talent. Agencies streamline the hiring process by rigorously assessing technical skills like SEO, PPC, and data analytics. This reduces time-to-hire and guarantees cultural fit, allowing Canadian businesses to quickly scale their marketing efforts with top-tier experts."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Digital marketing",
+      "Recruitment",
+      "Employment"
+    ],
+    "secondary_entities": [
+      "Search engine optimization",
+      "Pay-per-click",
+      "Content marketing",
+      "Remote work",
+      "Salary"
+    ],
+    "tertiary_entities": [
+      "Canada",
+      "Toronto",
+      "Vancouver",
+      "Professional Staffing",
+      "Web analytics"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Digital_marketing",
+      "https://en.wikipedia.org/wiki/Recruitment",
+      "https://en.wikipedia.org/wiki/Employment",
+      "https://en.wikipedia.org/wiki/Search_engine_optimization"
+    ]
+  },
+  "opportunity_score": 82,
+  "keyword": "digital marketing jobs"
+}

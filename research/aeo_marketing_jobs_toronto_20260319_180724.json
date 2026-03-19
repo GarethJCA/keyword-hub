@@ -1,0 +1,53 @@
+{
+  "questions": [
+    {
+      "question": "What are the most in-demand marketing jobs in Toronto?",
+      "intent": "Informational",
+      "answer": "The most in-demand marketing jobs in Toronto include Digital Marketing Managers, SEO Specialists, Content Strategists, and Growth Marketers. Toronto's booming tech and financial sectors actively seek professionals with advanced data-driven marketing skills, offering highly competitive salaries and strong career progression opportunities for qualified candidates. Partnering with a recruiter accelerates this process."
+    },
+    {
+      "question": "How can I find the best marketing jobs in Toronto?",
+      "intent": "Transactional",
+      "answer": "To find the best marketing jobs in Toronto, partner with a specialized professional staffing agency like professionalstaffing.ca. We connect top marketing talent with leading Canadian employers, offering access to exclusive unadvertised roles, personalized career guidance, resume optimization, and direct introductions to hiring managers throughout the GTA. This ensures a faster, more successful job search."
+    },
+    {
+      "question": "What is the average salary for a marketing manager in Toronto?",
+      "intent": "Informational",
+      "answer": "The average salary for a Marketing Manager in Toronto typically ranges from $80,000 to $120,000 annually, depending heavily on experience and industry. Specialized roles in digital marketing, product marketing, or the tech sector often command higher compensation packages, alongside lucrative performance bonuses and comprehensive health benefits. Senior leadership roles can exceed these averages significantly."
+    },
+    {
+      "question": "Are marketing jobs in high demand in Toronto?",
+      "intent": "Informational",
+      "answer": "Yes, marketing jobs are in exceptionally high demand across Toronto. As Canada's largest economic hub, Toronto hosts numerous corporate headquarters, innovative startups, and creative agencies. There is a continuous, growing need for skilled marketing professionals to drive brand awareness, digital transformation, and effective customer acquisition strategies. This creates a highly favorable market for job seekers."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Marketing",
+      "Employment",
+      "Toronto"
+    ],
+    "secondary_entities": [
+      "Digital marketing",
+      "Recruitment",
+      "Professional Staffing",
+      "Salary",
+      "Greater Toronto Area"
+    ],
+    "tertiary_entities": [
+      "Search engine optimization",
+      "Content strategy",
+      "Hiring Manager",
+      "Job hunting"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Marketing",
+      "https://en.wikipedia.org/wiki/Employment",
+      "https://en.wikipedia.org/wiki/Toronto",
+      "https://en.wikipedia.org/wiki/Digital_marketing",
+      "https://en.wikipedia.org/wiki/Recruitment"
+    ]
+  },
+  "opportunity_score": 82,
+  "keyword": "Marketing Jobs Toronto"
+}

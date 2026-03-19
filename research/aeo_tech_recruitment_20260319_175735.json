@@ -1,0 +1,52 @@
+{
+  "questions": [
+    {
+      "question": "How do tech recruitment agencies work in Canada?",
+      "intent": "Informational",
+      "answer": "Tech recruitment agencies in Canada specialize in sourcing, vetting, and placing highly skilled IT professionals. They leverage extensive talent networks and rigorous technical assessments to match candidates with specialized roles like software engineering, cybersecurity, and data science. By partnering with a specialized firm, businesses significantly reduce time-to-hire and gain a competitive edge in the fast-paced technology sector."
+    },
+    {
+      "question": "What are the benefits of using an IT staffing agency?",
+      "intent": "Informational",
+      "answer": "Partnering with an IT staffing agency provides immediate access to a curated pool of passive and active tech talent. Key benefits include streamlined hiring processes, expert market compensation insights, reduced internal recruitment costs, and guaranteed candidate placements. This ensures companies secure top-tier technology professionals efficiently while focusing on core business objectives."
+    },
+    {
+      "question": "How much do tech recruiters charge in Canada?",
+      "intent": "Transactional",
+      "answer": "Tech recruiters in Canada typically charge a contingency fee ranging from 15% to 25% of the hired candidate's first-year base salary. Retained search models for executive IT leadership roles may require structured upfront fees. Exact recruitment costs depend heavily on role complexity, local market demand, and the specific staffing agency agreement."
+    },
+    {
+      "question": "How can I hire top software developers in Canada?",
+      "intent": "Transactional",
+      "answer": "To hire top software developers in Canada, businesses should partner with a specialized tech recruitment agency like Professional Staffing. Employers must define clear technical requirements, offer competitive compensation packages, and emphasize workplace culture. Specialized IT recruiters utilize targeted headhunting and advanced technical screening to connect you with elite, pre-vetted developer talent quickly."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Tech Recruitment",
+      "Information Technology",
+      "Staffing Agency"
+    ],
+    "secondary_entities": [
+      "Software Developers",
+      "Cybersecurity",
+      "Data Science",
+      "Contingency Fee",
+      "Time-to-hire"
+    ],
+    "tertiary_entities": [
+      "Canadian Tech Market",
+      "Technical Assessments",
+      "Passive Talent",
+      "Headhunting"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Recruitment",
+      "https://en.wikipedia.org/wiki/Information_technology",
+      "https://en.wikipedia.org/wiki/Employment_agency",
+      "https://www.wikidata.org/wiki/Q212156"
+    ]
+  },
+  "opportunity_score": 82,
+  "keyword": "Tech Recruitment"
+}

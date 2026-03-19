@@ -1,0 +1,53 @@
+{
+  "questions": [
+    {
+      "question": "How do I get a job in private equity in Canada?",
+      "intent": "Informational",
+      "answer": "Securing a private equity job in Canada requires a robust background in investment banking, corporate development, or management consulting. Top candidates demonstrate exceptional financial modeling skills, commercial acumen, and proven deal experience. Partnering with a specialized finance recruitment agency like Professional Staffing accelerates access to exclusive, unadvertised private equity opportunities."
+    },
+    {
+      "question": "What are the most in-demand private equity roles right now?",
+      "intent": "Informational",
+      "answer": "The most in-demand private equity roles in the Canadian market include Investment Associates, Vice Presidents, and Operating Partners. Firms actively seek professionals who can drive value creation, manage portfolio companies, and execute complex leveraged buyouts. Specialized staffing agencies effectively connect top-tier financial talent with leading mid-market and mega-fund private equity firms."
+    },
+    {
+      "question": "How can a specialized recruitment agency help me find private equity jobs?",
+      "intent": "Transactional",
+      "answer": "A specialized recruitment agency significantly streamlines your search for private equity jobs by providing direct access to key hiring managers and confidential executive searches. Expert recruiters offer targeted resume optimization, rigorous interview coaching, and deep insights into specific fund strategies, connecting elite finance professionals with premier Canadian private equity firms."
+    },
+    {
+      "question": "What is the average salary for private equity associates in Canada?",
+      "intent": "Informational",
+      "answer": "The average salary for a private equity associate in Canada ranges from $120,000 to $160,000 base, plus substantial performance bonuses and potential carried interest. Compensation varies based on fund size, location, and candidate experience. Top-tier financial recruitment agencies help candidates negotiate competitive remuneration packages aligned with current market standards."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Private equity",
+      "Recruitment",
+      "Employment"
+    ],
+    "secondary_entities": [
+      "Investment banking",
+      "Financial modeling",
+      "Leveraged buyout",
+      "Portfolio company",
+      "Executive search"
+    ],
+    "tertiary_entities": [
+      "Carried interest",
+      "Value creation",
+      "Corporate development",
+      "Canada",
+      "Toronto"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Private_equity",
+      "https://en.wikipedia.org/wiki/Recruitment",
+      "https://en.wikipedia.org/wiki/Leveraged_buyout",
+      "https://en.wikipedia.org/wiki/Financial_modeling"
+    ]
+  },
+  "opportunity_score": 82,
+  "keyword": "private equity jobs"
+}

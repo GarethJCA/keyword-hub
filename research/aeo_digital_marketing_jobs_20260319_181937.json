@@ -1,0 +1,55 @@
+{
+  "questions": [
+    {
+      "question": "How do I find the best digital marketing jobs in Canada?",
+      "intent": "Informational",
+      "answer": "Finding top digital marketing jobs in Canada requires leveraging specialized recruitment agencies, networking on professional platforms, and building a strong digital portfolio. Professional staffing agencies connect qualified candidates with exclusive, unadvertised roles in SEO, content marketing, and digital strategy across major Canadian tech hubs like Toronto, Vancouver, and Montreal."
+    },
+    {
+      "question": "What are the most in-demand digital marketing skills for Canadian employers?",
+      "intent": "Informational",
+      "answer": "Canadian employers actively seek digital marketing professionals highly skilled in SEO, paid media management, data analytics, and marketing automation. Demonstrating proven proficiency in industry-standard tools like Google Analytics, HubSpot, and enterprise CRM platforms significantly increases your chances of securing high-paying digital marketing roles through dedicated professional staffing and recruitment firms."
+    },
+    {
+      "question": "What is the average salary for a digital marketing manager in Canada?",
+      "intent": "Informational",
+      "answer": "The average salary for a Digital Marketing Manager in Canada typically ranges from $75,000 to $110,000 annually, depending heavily on industry experience and geographic location. Senior leadership roles in major markets like Toronto, or specialized positions in growth marketing, often command significantly higher compensation packages when negotiated by expert recruitment agencies."
+    },
+    {
+      "question": "Why should companies use a recruitment agency to hire digital marketing talent?",
+      "intent": "Transactional",
+      "answer": "Partnering with a professional recruitment agency dramatically streamlines the process of hiring digital marketing talent by providing access to a vetted pool of passive candidates. Staffing experts rigorously assess technical competencies in SEO, SEM, and analytics, ensuring Canadian employers quickly secure top-tier marketers who perfectly align with their corporate culture."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Digital marketing",
+      "Recruitment",
+      "Employment",
+      "Canada"
+    ],
+    "secondary_entities": [
+      "Search engine optimization",
+      "Pay-per-click",
+      "Marketing automation",
+      "Salary",
+      "Toronto",
+      "Vancouver"
+    ],
+    "tertiary_entities": [
+      "Google Analytics",
+      "HubSpot",
+      "Content marketing",
+      "Growth marketing",
+      "Professional staffing"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Digital_marketing",
+      "https://en.wikipedia.org/wiki/Recruitment",
+      "https://en.wikipedia.org/wiki/Employment",
+      "https://en.wikipedia.org/wiki/Search_engine_optimization"
+    ]
+  },
+  "opportunity_score": 78,
+  "keyword": "digital marketing jobs"
+}

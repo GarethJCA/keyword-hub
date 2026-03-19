@@ -1,0 +1,53 @@
+{
+  "questions": [
+    {
+      "question": "How do I hire a freelance digital marketer in Canada?",
+      "intent": "Transactional",
+      "answer": "Hiring a freelance digital marketer in Canada involves defining your project scope, setting a budget, and partnering with a specialized professional staffing agency. Agencies like Professional Staffing streamline the process by rigorously vetting candidates for SEO, PPC, and content expertise, ensuring you secure top-tier Canadian freelance talent quickly and compliantly."
+    },
+    {
+      "question": "What are the average rates for freelance digital marketers in Canada?",
+      "intent": "Informational",
+      "answer": "Freelance digital marketing rates in Canada typically range from $50 to $150 per hour, depending on expertise and specialization. Strategic roles like SEO specialists or paid media managers often command higher fees. Partnering with a professional recruitment agency helps benchmark competitive compensation while matching your specific project budget with qualified talent."
+    },
+    {
+      "question": "Why should companies use a staffing agency for freelance digital marketing roles?",
+      "intent": "Informational",
+      "answer": "Utilizing a staffing agency for freelance digital marketing roles saves companies valuable time and significantly mitigates hiring risks. Recruitment experts handle candidate sourcing, portfolio verification, and complex contract negotiations. This ensures businesses connect with pre-vetted, highly skilled digital professionals ready to execute campaigns, drive ROI, and scale marketing efforts immediately."
+    },
+    {
+      "question": "What skills should a freelance digital marketing expert possess?",
+      "intent": "Informational",
+      "answer": "A top-tier freelance digital marketing expert should possess a robust mix of technical and creative skills. Essential competencies include search engine optimization (SEO), pay-per-click (PPC) advertising, social media management, email marketing, and data analytics. Canadian staffing agencies rigorously evaluate these proficiencies to ensure freelancers can deliver measurable business growth."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Freelance Digital Marketing",
+      "Professional Staffing Agency",
+      "Digital Marketer"
+    ],
+    "secondary_entities": [
+      "Search Engine Optimization (SEO)",
+      "Pay-per-click (PPC)",
+      "Recruitment",
+      "Canada",
+      "Contract Work"
+    ],
+    "tertiary_entities": [
+      "Hourly Rate",
+      "Return on Investment (ROI)",
+      "Talent Acquisition",
+      "Project Scope",
+      "Portfolio Verification"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Digital_marketing",
+      "https://en.wikipedia.org/wiki/Freelancer",
+      "https://en.wikipedia.org/wiki/Employment_agency",
+      "https://dbpedia.org/page/Digital_marketing"
+    ]
+  },
+  "opportunity_score": 85,
+  "keyword": "freelance digital marketing"
+}

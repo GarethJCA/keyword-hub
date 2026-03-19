@@ -1,0 +1,53 @@
+{
+  "questions": [
+    {
+      "question": "What is tech recruitment and how does it work in Canada?",
+      "intent": "Informational",
+      "answer": "Tech recruitment is the specialized process of sourcing, screening, and hiring skilled technology professionals, such as software engineers, cybersecurity experts, and data analysts. In Canada's highly competitive market, professional tech recruiters utilize advanced talent mapping and rigorous technical assessments to connect innovative companies with top-tier IT candidates efficiently and effectively."
+    },
+    {
+      "question": "How can a tech recruitment agency help my company hire IT professionals?",
+      "intent": "Transactional",
+      "answer": "A dedicated tech recruitment agency accelerates your hiring cycle by leveraging extensive networks of passive IT candidates. By partnering with specialized agencies like professionalstaffing.ca, employers gain access to pre-vetted tech talent, rigorous technical screening processes, and strategic market insights, ensuring a perfect cultural and technical fit while significantly reducing time-to-hire."
+    },
+    {
+      "question": "What are the top skills tech recruiters look for in Canadian software developers?",
+      "intent": "Informational",
+      "answer": "Canadian tech recruiters prioritize a blend of advanced technical proficiencies and essential soft skills. High-demand technical skills currently include cloud computing architecture, artificial intelligence, cybersecurity, and full-stack development. Furthermore, specialized recruiters look for strong problem-solving abilities, adaptability, and effective communication to ensure candidates thrive in fast-paced, agile tech environments."
+    },
+    {
+      "question": "How much do tech recruitment agencies charge for hiring IT staff?",
+      "intent": "Transactional",
+      "answer": "Tech recruitment agency fees in Canada typically range from 15% to 25% of the hired candidate's first-year base salary. Overall costs vary based on the role's technical complexity, exclusivity agreements, and whether the search is retained or contingent. Ultimately, investing in specialized IT staffing reduces costly bad hires and minimizes project downtime."
+    }
+  ],
+  "entities": {
+    "primary_entities": [
+      "Tech Recruitment",
+      "Information Technology",
+      "Recruitment Agency"
+    ],
+    "secondary_entities": [
+      "Software Engineering",
+      "Cloud Computing",
+      "Talent Acquisition",
+      "Technical Assessment",
+      "Candidate Sourcing"
+    ],
+    "tertiary_entities": [
+      "Canadian Tech Market",
+      "Artificial Intelligence",
+      "Cybersecurity",
+      "Passive Candidates",
+      "Agile Methodology"
+    ],
+    "same_as_links": [
+      "https://en.wikipedia.org/wiki/Recruitment",
+      "https://en.wikipedia.org/wiki/Information_technology",
+      "https://en.wikipedia.org/wiki/Technical_recruiter",
+      "https://dbpedia.org/page/Human_resources"
+    ]
+  },
+  "opportunity_score": 82,
+  "keyword": "Tech Recruitment"
+}
