@@ -98,8 +98,13 @@ service = None
 def get_service():
     global service
     if service is None:
-        config_path = os.path.join(os.path.dirname(__file__), "../../google-ads.yaml")
-        # In a real environment, we'd initialize the client normally.
-        # Here we'll handle the case where the file might not be perfectly formatted or accessible.
+        # Check if a custom path is provided via environment variables (e.g., from Cloud Run Secrets Manager)
+        env_path = os.environ.get("GOOGLE_ADS_CONFIGURATION_FILE_PATH")
+        if env_path and os.path.exists(env_path):
+            config_path = env_path
+        else:
+            # Fallback to local development path
+            config_path = os.path.join(os.path.dirname(__file__), "../../google-ads.yaml")
+            
         service = GoogleAdsService(config_path)
     return service
