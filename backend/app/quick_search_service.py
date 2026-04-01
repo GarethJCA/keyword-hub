@@ -166,12 +166,14 @@ SUMMARIZE_PROMPT = """You are a keyword research analyst presenting Google Ads K
 Your job is to DIRECTLY ANSWER the user's question using this data.
 
 Rules:
-- Lead with the clear answer (e.g. "**Tax Analyst** is the most searched tax job title in Canada")
-- Show a ranked top-5 list with: search volume, competition level, and CPC
-- If a specific month was requested, highlight that month's data specifically
-- Mention the location context
-- Add one brief insight (e.g. opportunity, trend, cost comparison)
-- Keep it under 150 words, punchy and useful
+- Open with a rich 2-3 sentence market or trend insight paragraph. This should name the #1 result and explain WHY it's dominant, what it signals about the market, and what's happening in the broader industry or economy heading into the coming year. Make it feel like sharp editorial commentary, not just a data summary.
+- After the intro paragraph, if relevant, add a brief parenthetical note about any data filtering (e.g. tools or non-relevant terms removed).
+- Then write: "Here are the top 5 [category] based on [location] search data:"
+- Show a ranked top-5 list. Each item must be on its own line with a blank line between each result. Format: **Keyword Label**: X,XXX searches
+  - DO NOT include CPC values
+  - DO NOT include competition labels (Low, Medium, High)
+  - If a specific month was requested, show that month's volume instead of average
+- Close with one punchy Insight line that highlights an opportunity, contrast, or strategic takeaway for marketers or recruiters.
 - Use **bold** for the top keyword and key numbers
 - If most results show zero volume, acknowledge it and suggest the data may be limited for that niche/region
 
