@@ -2,7 +2,7 @@ import json
 import re
 import httpx
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash"
 
 # Geo target IDs — verified via Google Ads API
 GEO_TARGETS = {
@@ -163,21 +163,35 @@ Return ONLY the JSON object. No markdown, no code fences, no explanation, no "Th
 
 SUMMARIZE_PROMPT = """You are a keyword research analyst presenting Google Ads Keyword Planner results. The user asked a question and we queried the API with multiple seed phrases. Below are the REAL results sorted by search volume.
 
-Your job is to DIRECTLY ANSWER the user's question using this data.
+Your job is to DIRECTLY ANSWER the user's question using this data. You MUST always output ALL sections below — never truncate.
 
-Rules:
-- Open with a rich 2-3 sentence market or trend insight paragraph. This should name the #1 result and explain WHY it's dominant, what it signals about the market, and what's happening in the broader industry or economy heading into the coming year. Make it feel like sharp editorial commentary, not just a data summary.
-- After the intro paragraph, if relevant, add a brief parenthetical note about any data filtering (e.g. tools or non-relevant terms removed).
-- Then write: "Here are the top 5 [category] based on [location] search data:"
-- Show a ranked top-5 list. Each item must be on its own line with a blank line between each result. Format: **Keyword Label**: X,XXX searches
-  - DO NOT include CPC values
-  - DO NOT include competition labels (Low, Medium, High)
-  - If a specific month was requested, show that month's volume instead of average
-- Close with one punchy Insight line that highlights an opportunity, contrast, or strategic takeaway for marketers or recruiters.
-- Use **bold** for the top keyword and key numbers
-- If most results show zero volume, acknowledge it and suggest the data may be limited for that niche/region
+STRICT OUTPUT STRUCTURE (follow this exactly, always):
 
-Format as clean markdown."""
+1. INTRO PARAGRAPH (2-3 sentences of sharp editorial insight):
+   - The FIRST sentence MUST name the #1 ranked result by name and its search volume
+   - Explain WHY it dominates — what it signals about the market or economy heading into the coming year
+   - End with a broader industry observation
+
+2. TRANSITION LINE (always include this exact format, filling in the blanks):
+   Here are the top [3-5] [category label] based on [location] search data:
+
+3. RANKED LIST (show the top 3–5 results, always include ALL of them):
+   - Each result on its own line with a BLANK LINE between each
+   - Format: **[Rank]. [Keyword]**: [X,XXX] searches/month
+   - Do NOT skip any results — show all top 3–5 even if volumes are similar
+   - Do NOT include CPC values
+   - Do NOT include competition labels
+   - If a specific month was requested, show that month's volume
+
+4. INSIGHT LINE (one punchy sentence):
+   Start with "💡 Insight:" and highlight one strategic opportunity, contrast, or takeaway for marketers or recruiters.
+
+CRITICAL RULES:
+- NEVER stop after only the intro paragraph — always continue to the ranked list
+- NEVER output fewer than 3 ranked results
+- Use **bold** for keyword names and key numbers
+- If most results show zero volume, still show the list and note the data is limited for that niche/region
+- Format as clean markdown"""
 
 
 async def extract_seeds(api_key: str, question: str) -> dict:
@@ -185,7 +199,7 @@ async def extract_seeds(api_key: str, question: str) -> dict:
     url = f"{GEMINI_API_URL}:generateContent?key={api_key}"
     payload = {
         "contents": [{"role": "user", "parts": [{"text": f'{EXTRACT_PROMPT}\n\nQuestion: "{question}"'}]}],
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 1024}
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 2048}
     }
     
     async with httpx.AsyncClient(timeout=30.0) as client:
@@ -333,11 +347,19 @@ async def stream_summary(api_key: str, question: str, results: list[dict], month
     else:
         lines = []
         for i, r in enumerate(results):
-            line = f"{i+1}. **{r['keyword']}**: {r['avg_monthly_volume']} avg monthly searches, {r['competition']} competition, ${r['cpc_cad']} CPC"
+            # Only pass keyword + volume — no CPC or competition to prevent bleed-through
             if month_filter and r.get("monthly_data"):
+                month_vol = None
                 for m in r["monthly_data"]:
                     if m["month"].startswith(month_filter.upper()[:3]) and (not year_filter or m["year"] == year_filter):
-                        line += f" | {m['month']} {m['year']}: {m['searches']} searches"
+                        month_vol = m["searches"]
+                        break
+                if month_vol is not None:
+                    line = f"{i+1}. {r['keyword']}: {month_vol} searches ({month_filter} {year_filter or ''})"
+                else:
+                    line = f"{i+1}. {r['keyword']}: {r['avg_monthly_volume']} avg monthly searches"
+            else:
+                line = f"{i+1}. {r['keyword']}: {r['avg_monthly_volume']} avg monthly searches"
             lines.append(line)
         results_text = "\n".join(lines)
     
@@ -357,7 +379,7 @@ API Results (sorted by search volume, highest first):
     url = f"{GEMINI_API_URL}:streamGenerateContent?alt=sse&key={api_key}"
     payload = {
         "contents": [{"role": "user", "parts": [{"text": f"{SUMMARIZE_PROMPT}\n\n{user_message}"}]}],
-        "generationConfig": {"temperature": 0.5, "maxOutputTokens": 2048}
+        "generationConfig": {"temperature": 0.5, "maxOutputTokens": 4096}
     }
 
     async with httpx.AsyncClient(timeout=60.0) as client:
