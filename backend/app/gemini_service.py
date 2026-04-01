@@ -2,7 +2,7 @@ import os
 import json
 import httpx
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-high:streamGenerateContent"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:streamGenerateContent"
 
 def _load_brand_context():
     """Load brand_standards.md and agency_architect_instructions.md as system context."""

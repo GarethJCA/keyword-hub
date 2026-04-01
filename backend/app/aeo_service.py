@@ -3,7 +3,7 @@ import json
 import httpx
 from datetime import datetime
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-high:generateContent"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent"
 
 AEO_SYSTEM_PROMPT = """You are an expert Answer Engine Optimization (AEO) Specialist for a Canadian Professional Staffing & Recruitment agency.
 Your task is to analyze a given keyword for professionalstaffing.ca and produce a structured JSON response to help us rank in AI Overviews (SGE).
