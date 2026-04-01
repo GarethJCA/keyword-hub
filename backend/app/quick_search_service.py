@@ -2,7 +2,7 @@ import json
 import re
 import httpx
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-high"
 
 # Geo target IDs — verified via Google Ads API
 GEO_TARGETS = {
