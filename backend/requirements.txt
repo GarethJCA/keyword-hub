@@ -6,3 +6,4 @@ pydantic-settings
 python-dotenv
 pandas
 httpx
+google-genai>=1.18.3

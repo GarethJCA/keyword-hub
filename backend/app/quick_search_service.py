@@ -1,8 +1,9 @@
 import json
 import re
-import httpx
+from google import genai
+from google.genai import types
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview"
+MODEL_ID = "gemini-3.1-pro-preview"
 
 # Geo target IDs — verified via Google Ads API
 GEO_TARGETS = {
@@ -134,16 +135,16 @@ GEO_TARGETS = {
 EXTRACT_PROMPT = """You are a Google Ads Keyword Planner research assistant. The user will ask a natural language question. Your job is to think step-by-step to generate the BEST possible keyword seeds to query the Google Ads Keyword Planner API.
 
 THINK LIKE THIS:
-1. "What is the user REALLY asking?" - Identify the category, industry, or topic
-2. "What are ALL the specific terms in this category that people would actually Google?" - Use YOUR OWN knowledge to brainstorm 15-20 specific, concrete terms
+1. "What ENTITY TYPE is the user REALLY asking for?" - Identify if they strictly want Job Titles, Software Tools, Certifications, Industries, or broad queries.
+2. "What are ALL the specific valid terms that match this EXACT entity type?" - Use YOUR OWN knowledge to brainstorm 15-20 specific, concrete terms.
 3. Output ONLY those terms as seeds
 
 CRITICAL RULES:
+- STRICT ENTITY FILTERING: If the user explicitly asks for "Job Titles" or "Roles" (e.g. Accountant, Director), you MUST ONLY output actual human job titles. Do NOT output software tools (like 'jira', 'excel'), methodologies (like 'agile'), companies, or degrees unless requested.
 - NEVER include the user's question as a seed. The question is NOT a keyword.
-- NEVER include vague phrases like "most searched" or "popular" - those are NOT keywords people Google
-- Each seed must be a SHORT phrase (1-4 words) that someone would actually type into Google Search
-- Generate 15-20 seeds to get comprehensive coverage
-- Think broadly - cover common AND niche variations in the category
+- NEVER include vague phrases like "most searched" or "popular" - those are NOT keywords people Google.
+- Each seed must be a SHORT phrase (1-4 words) that someone would actually type into Google Search.
+- Generate 15-20 seeds to get comprehensive coverage but KEEP THEM STRICTLY within the demanded entity type.
 
 EXAMPLES:
 
@@ -167,15 +168,20 @@ Your job is to DIRECTLY ANSWER the user's question using this data. You MUST alw
 
 STRICT OUTPUT STRUCTURE (follow this exactly, always):
 
-1. INTRO PARAGRAPH (2-3 sentences of sharp editorial insight):
-   - The FIRST sentence MUST name the #1 ranked result by name and its search volume
+1. INTENT FILTERING (Do this silently before writing):
+   - Evaluate the API Results against the user's original intent.
+   - If the user explicitly asked for 'Job Titles', you MUST SILENTLY DISCARD any data returns that are software tools (e.g., 'jira', 'excel'), companies, methodologies (e.g., 'pmis', 'agile'), or non-titles. 
+   - Base your entire response ONLY on the items that pass this filter.
+
+2. INTRO PARAGRAPH (2-3 sentences of sharp editorial insight):
+   - The FIRST sentence MUST name the #1 ranked result (AFTER filtering) by name and its search volume
    - Explain WHY it dominates — what it signals about the market or economy heading into the coming year
    - End with a broader industry observation
 
-2. TRANSITION LINE (always include this exact format, filling in the blanks):
+3. TRANSITION LINE (always include this exact format, filling in the blanks):
    Here are the top [3-5] [category label] based on [location] search data:
 
-3. RANKED LIST (show the top 3–5 results, always include ALL of them):
+4. RANKED LIST (show the top 3–5 results, AFTER filtering out mismatches. Always include ALL of them):
    - Each result on its own line with a BLANK LINE between each
    - Format: **[Rank]. [Keyword]**: [X,XXX] searches/month
    - Do NOT skip any results — show all top 3–5 even if volumes are similar
@@ -183,7 +189,7 @@ STRICT OUTPUT STRUCTURE (follow this exactly, always):
    - Do NOT include competition labels
    - If a specific month was requested, show that month's volume
 
-4. INSIGHT LINE (one punchy sentence):
+5. INSIGHT LINE (one punchy sentence):
    Start with "💡 Insight:" and highlight one strategic opportunity, contrast, or takeaway for marketers or recruiters.
 
 CRITICAL RULES:
@@ -196,61 +202,67 @@ CRITICAL RULES:
 
 async def extract_seeds(api_key: str, question: str) -> dict:
     """Use Gemini to extract keyword seeds from a natural language question."""
-    url = f"{GEMINI_API_URL}:generateContent?key={api_key}"
-    payload = {
-        "contents": [{"role": "user", "parts": [{"text": f'{EXTRACT_PROMPT}\n\nQuestion: "{question}"'}]}],
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 2048}
-    }
+    print("DEBUG 1: Entering extract_seeds")
+    client = genai.Client(api_key=api_key)
     
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.post(url, json=payload)
-        if resp.status_code != 200:
-            print(f"Gemini extract error: {resp.status_code} - {resp.text}")
-            return {"seeds": [], "intent": question}
+    print("DEBUG 2: Created client")
+    config = types.GenerateContentConfig(
+        temperature=0.3,
+        max_output_tokens=2048,
+        thinking_config=types.ThinkingConfig(
+            include_thoughts=False,
+            thinking_budget=2000
+        )
+    )
+    
+    print("DEBUG 3: Created config")
+    
+    try:
+        response = await client.aio.models.generate_content(
+            model=MODEL_ID,
+            contents=f'{EXTRACT_PROMPT}\n\nQuestion: "{question}"',
+            config=config
+        )
+        text = response.text.strip()
+    except Exception as e:
+        print(f"Gemini extract error: {e}")
+        return {"seeds": [], "intent": question}
         
-        data = resp.json()
+    print(f"Quick Search: Raw Gemini extraction response: {text[:500]}")
+    
+    # Strategy 1: Try direct JSON parse
+    try:
+        result = json.loads(text)
+        seeds = _validate_seeds(result.get("seeds", []), question)
+        if seeds:
+            print(f"Quick Search: Direct parse OK → {len(seeds)} seeds: {seeds[:5]}...")
+            return {"seeds": seeds, "intent": result.get("intent", question)}
+    except json.JSONDecodeError:
+        pass
+    
+    # Strategy 2: Extract JSON from markdown fences or surrounding text
+    json_match = re.search(r'\{[^{}]*"seeds"\s*:\s*\[.*?\][^{}]*\}', text, re.DOTALL)
+    if json_match:
         try:
-            text = data["candidates"][0]["content"]["parts"][0]["text"]
-        except (KeyError, IndexError):
-            print(f"Quick Search: Unexpected Gemini response: {json.dumps(data)[:300]}")
-            return {"seeds": [], "intent": question}
-        
-        text = text.strip()
-        print(f"Quick Search: Raw Gemini extraction response: {text[:500]}")
-        
-        # Strategy 1: Try direct JSON parse
-        try:
-            result = json.loads(text)
+            result = json.loads(json_match.group(0))
             seeds = _validate_seeds(result.get("seeds", []), question)
             if seeds:
-                print(f"Quick Search: Direct parse OK → {len(seeds)} seeds: {seeds[:5]}...")
+                print(f"Quick Search: Regex extract OK → {len(seeds)} seeds: {seeds[:5]}...")
                 return {"seeds": seeds, "intent": result.get("intent", question)}
         except json.JSONDecodeError:
             pass
-        
-        # Strategy 2: Extract JSON from markdown fences or surrounding text
-        json_match = re.search(r'\{[^{}]*"seeds"\s*:\s*\[.*?\][^{}]*\}', text, re.DOTALL)
-        if json_match:
-            try:
-                result = json.loads(json_match.group(0))
-                seeds = _validate_seeds(result.get("seeds", []), question)
-                if seeds:
-                    print(f"Quick Search: Regex extract OK → {len(seeds)} seeds: {seeds[:5]}...")
-                    return {"seeds": seeds, "intent": result.get("intent", question)}
-            except json.JSONDecodeError:
-                pass
-        
-        # Strategy 3: Extract just the array
-        array_match = re.search(r'"seeds"\s*:\s*\[([^\]]+)\]', text)
-        if array_match:
-            try:
-                seeds_raw = json.loads(f"[{array_match.group(1)}]")
-                seeds = _validate_seeds(seeds_raw, question)
-                if seeds:
-                    print(f"Quick Search: Array extract OK → {len(seeds)} seeds")
-                    return {"seeds": seeds, "intent": question}
-            except json.JSONDecodeError:
-                pass
+    
+    # Strategy 3: Extract just the array
+    array_match = re.search(r'"seeds"\s*:\s*\[([^\]]+)\]', text)
+    if array_match:
+        try:
+            seeds_raw = json.loads(f"[{array_match.group(1)}]")
+            seeds = _validate_seeds(seeds_raw, question)
+            if seeds:
+                print(f"Quick Search: Array extract OK → {len(seeds)} seeds")
+                return {"seeds": seeds, "intent": question}
+        except json.JSONDecodeError:
+            pass
         
         print(f"Quick Search: ALL extraction strategies failed for '{question}'")
         return {"seeds": [], "intent": question}
@@ -376,42 +388,32 @@ async def stream_summary(api_key: str, question: str, results: list[dict], month
 API Results (sorted by search volume, highest first):
 {results_text}"""
     
-    url = f"{GEMINI_API_URL}:streamGenerateContent?alt=sse&key={api_key}"
-    payload = {
-        "contents": [{"role": "user", "parts": [{"text": f"{SUMMARIZE_PROMPT}\n\n{user_message}"}]}],
-        "generationConfig": {"temperature": 0.5, "maxOutputTokens": 4096}
-    }
+    client = genai.Client(api_key=api_key)
+    
+    config = types.GenerateContentConfig(
+        temperature=0.5,
+        max_output_tokens=8192,
+        thinking_config=types.ThinkingConfig(
+            include_thoughts=True,
+            thinking_budget=8000
+        )
+    )
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        try:
-            async with client.stream("POST", url, json=payload) as response:
-                if response.status_code != 200:
-                    error_body = await response.aread()
-                    print(f"Gemini summary error: {response.status_code} - {error_body.decode()}")
-                    yield f"⚠️ API error {response.status_code}. Please check your Gemini API key."
-                    return
-                    
-                async for line in response.aiter_lines():
-                    if line.startswith("data: "):
-                        data = line[6:]
-                        if data.strip() == "[DONE]":
-                            break
-                        try:
-                            chunk = json.loads(data)
-                            candidates = chunk.get("candidates", [])
-                            if candidates:
-                                parts = candidates[0].get("content", {}).get("parts", [])
-                                for part in parts:
-                                    text = part.get("text", "")
-                                    if text:
-                                        yield text
-                        except json.JSONDecodeError:
-                            continue
-        except httpx.ReadTimeout:
-            yield "\n\n⚠️ Request timed out. Please try again."
-        except Exception as e:
-            print(f"Gemini stream error: {e}")
-            yield f"\n\n⚠️ Error: {str(e)}"
+    try:
+        response_stream = await client.aio.models.generate_content_stream(
+            model=MODEL_ID,
+            contents=f"{SUMMARIZE_PROMPT}\n\n{user_message}",
+            config=config
+        )
+        
+        async for chunk in response_stream:
+            # We ONLY yield the text chunk, NOT the thoughts
+            if chunk.text:
+                yield chunk.text
+                
+    except Exception as e:
+        print(f"Gemini stream error: {e}")
+        yield f"\n\n⚠️ Error: {str(e)}"
 
 
 def resolve_location(location_str: str) -> tuple[str, str]:

@@ -1,9 +1,10 @@
 import os
 import json
-import httpx
 from datetime import datetime
+from google import genai
+from google.genai import types
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent"
+MODEL_ID = "gemini-3.1-pro-preview"
 
 AEO_SYSTEM_PROMPT = """You are an expert Answer Engine Optimization (AEO) Specialist for a Canadian Professional Staffing & Recruitment agency.
 Your task is to analyze a given keyword for professionalstaffing.ca and produce a structured JSON response to help us rank in AI Overviews (SGE).
@@ -33,28 +34,31 @@ Return ONLY a valid JSON object matching this schema exactly:
 """
 
 async def generate_aeo_for_keyword(api_key: str, keyword: str) -> dict:
-    payload = {
-        "contents": [{"role": "user", "parts": [{"text": f"Generate AEO strategy for keyword: {keyword}"}]}],
-        "systemInstruction": {"parts": [{"text": AEO_SYSTEM_PROMPT}]},
-        "generationConfig": {
-            "temperature": 0.4,
-            "responseMimeType": "application/json"
-        }
-    }
+    client = genai.Client(api_key=api_key)
     
-    url = f"{GEMINI_API_URL}?key={api_key}"
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        try:
-            response = await client.post(url, json=payload)
-            response.raise_for_status()
-            data = response.json()
-            text = data["candidates"][0]["content"]["parts"][0]["text"]
-            return json.loads(text)
-        except Exception as e:
-            print(f"Error parsing Gemini AEO response for {keyword}: {e}")
-            if 'response' in locals() and hasattr(response, 'text'):
-                print(f"Response text: {response.text}")
-            return None
+    config = types.GenerateContentConfig(
+        system_instruction=AEO_SYSTEM_PROMPT,
+        temperature=0.4,
+        response_mime_type="application/json",
+        max_output_tokens=8192,
+        thinking_config=types.ThinkingConfig(
+            include_thoughts=False, # Backend doesn't need to return thoughts for json payload
+            thinking_budget=4000
+        )
+    )
+    
+    try:
+        response = await client.aio.models.generate_content(
+            model=MODEL_ID,
+            contents=f"Generate AEO strategy for keyword: {keyword}",
+            config=config
+        )
+        text = response.text
+        # Optional check: If JSON has thoughts prepended somehow, strip them. But response_mime_type should protect us.
+        return json.loads(text)
+    except Exception as e:
+        print(f"Error parsing Gemini AEO response for {keyword}: {e}")
+        return None
 
 async def process_aeo_batch(api_key: str, keywords: list) -> list:
     results = []

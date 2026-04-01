@@ -1,8 +1,9 @@
 import os
 import json
-import httpx
+from google import genai
+from google.genai import types
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:streamGenerateContent"
+MODEL_ID = "gemini-3.1-pro-preview"
 
 def _load_brand_context():
     """Load brand_standards.md and agency_architect_instructions.md as system context."""
@@ -58,59 +59,42 @@ async def stream_chat(api_key: str, keywords: list[str], messages: list[dict], l
     
     # Add keyword context as first user message if this is the start of the conversation
     if len(messages) == 1:
-        gemini_contents.append({
-            "role": "user",
-            "parts": [{"text": keyword_context + "\n\n" + messages[0]["content"]}]
-        })
+        gemini_contents.append(
+            types.Content(role="user", parts=[types.Part.from_text(keyword_context + "\n\n" + messages[0]["content"])])
+        )
     else:
         # Add all messages
         for msg in messages:
             role = "user" if msg["role"] == "user" else "model"
-            gemini_contents.append({
-                "role": role,
-                "parts": [{"text": msg["content"]}]
-            })
+            gemini_contents.append(
+                types.Content(role=role, parts=[types.Part.from_text(msg["content"])])
+            )
+            
+    client = genai.Client(api_key=api_key)
     
-    payload = {
-        "contents": gemini_contents,
-        "systemInstruction": {
-            "parts": [{"text": full_system}]
-        },
-        "generationConfig": {
-            "temperature": 0.7,
-            "maxOutputTokens": 8192
-        }
-    }
+    config = types.GenerateContentConfig(
+        system_instruction=full_system,
+        temperature=0.7,
+        max_output_tokens=8192,
+        thinking_config=types.ThinkingConfig(
+            include_thoughts=True,
+            thinking_budget=8000
+        )
+    )
     
-    url = f"{GEMINI_API_URL}?alt=sse&key={api_key}"
-    
-    async with httpx.AsyncClient(timeout=120.0) as client:
-        try:
-            async with client.stream("POST", url, json=payload) as response:
-                if response.status_code != 200:
-                    error_body = await response.aread()
-                    print(f"Gemini API error: {response.status_code} - {error_body.decode()}")
-                    yield f"⚠️ Gemini API returned error {response.status_code}. Please check your API key."
-                    return
-                    
-                async for line in response.aiter_lines():
-                    if line.startswith("data: "):
-                        data = line[6:]
-                        if data.strip() == "[DONE]":
-                            break
-                        try:
-                            chunk = json.loads(data)
-                            candidates = chunk.get("candidates", [])
-                            if candidates:
-                                parts = candidates[0].get("content", {}).get("parts", [])
-                                for part in parts:
-                                    text = part.get("text", "")
-                                    if text:
-                                        yield text
-                        except json.JSONDecodeError:
-                            continue
-        except httpx.ReadTimeout:
-            yield "\n\n⚠️ The request timed out. The system prompt may be too large. Please try again."
-        except Exception as e:
-            print(f"Gemini stream error: {e}")
-            yield f"\n\n⚠️ Error: {str(e)}"
+    try:
+        response_stream = await client.aio.models.generate_content_stream(
+            model=MODEL_ID,
+            contents=gemini_contents,
+            config=config
+        )
+        
+        async for chunk in response_stream:
+            # The user explicitly asked to "only show draft content"
+            # This means we filter out all 'thoughts' from the stream and only yield the final text
+            if chunk.text:
+                yield chunk.text
+                
+    except Exception as e:
+        print(f"Gemini stream error: {e}")
+        yield f"\n\n⚠️ Error: {str(e)}"
